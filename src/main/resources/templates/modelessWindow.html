@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>モードレス画面</title>
+    <style>
+        table { border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 4px 8px; }
+    </style>
+    </head>
+<body>
+<h2>モードレス画面</h2>
+
+<div th:if="${#lists.isEmpty(testList)}">
+    データがありません。
+    <div style="margin-top:8px; color:#666;" th:text="${testList}"></div>
+    <!-- ↑ デバッグ用: 中身の確認。不要なら削除可 -->
+    </div>
+
+<table th:if="${!#lists.isEmpty(testList)}">
+    <thead>
+    <tr>
+        <th>name</th>
+        <th>sex</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="row : ${testList}">
+        <td th:text="${row.name}">name</td>
+        <td th:text="${row.sex}">sex</td>
+    </tr>
+    </tbody>
+    </table>
+
+</body>
+</html>
