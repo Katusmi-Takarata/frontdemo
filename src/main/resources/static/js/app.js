@@ -8,7 +8,7 @@ function modelessWindow() {
   const modal = window.open('about:blank', target, 'width=1280,height=1080');
 
   // ② Ajax用リクエスト
-  const requestBody = toData('name', 'sex');
+  const requestBody = collectValuesById('name', 'sex');
 
   // ルート相対URLに統一（/test1）
   ajaxPost(
@@ -19,7 +19,7 @@ function modelessWindow() {
         testList: JSON.stringify(response),
       };
       // POST 先もルート相対に統一（/test2）
-      post('/test2', param, target);
+      postToWindow('/test2', param, target);
     },
     function () {
       modal.close();
@@ -28,14 +28,15 @@ function modelessWindow() {
   );
 }
 
-// シンプルなデータ収集（idで指定した要素から値を収集）
-function toData(...name) {
-  let data = {};
-  for (let id of name) {
-    const el = document.getElementById(id);
-    data[id] = el ? el.value : '';
+// 指定した要素IDから value を収集してオブジェクト化
+function collectValuesById(...elementIds) {
+  const values = {};
+
+  for (const id of elementIds) {
+    const element = document.getElementById(id);
+    values[id] = element?.value ?? '';
   }
-  return data;
+  return values;
 }
 
 // JSON POST (fetch)
@@ -57,18 +58,17 @@ function ajaxPost(url, data, onSuccess, onError) {
 }
 
 // 別ウィンドウ（ターゲット）へフォームPOST
-function post(action, param, target) {
+function postToWindow(url, params, targetName) {
   const form = document.createElement('form');
   form.method = 'post';
-  // 相対でも絶対URLに正規化してから設定
-  form.action = toAbsoluteUrl(action);
-  form.target = target;
+  form.action = toAbsoluteUrl(url);
+  form.target = targetName;
 
-  Object.keys(param).forEach(function (key) {
+  Object.keys(params).forEach(function (name) {
     const input = document.createElement('input');
     input.type = 'hidden';
-    input.name = key;
-    input.value = param[key];
+    input.name = name;
+    input.value = params[name];
     form.appendChild(input);
   });
 
